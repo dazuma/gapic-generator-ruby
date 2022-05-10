@@ -53,7 +53,9 @@ module Gapic
       def services
         @services ||= begin
           files = @api.generate_files
-          files.map(&:services).flatten.map { |s| ServicePresenter.new self, @api, s }
+          service_names = files.map(&:services).flatten
+          service_names -= @mixins_model.mixin_services
+          service_names.map { |s| ServicePresenter.new self, @api, s }
         end
       end
 

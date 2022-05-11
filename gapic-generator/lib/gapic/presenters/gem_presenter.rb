@@ -54,7 +54,10 @@ module Gapic
         @services ||= begin
           files = @api.generate_files
           service_names = files.map(&:services).flatten
-          service_names -= @mixins_model.mixin_services
+$stderr.puts "**** GEM-SERVICES: #{service_names.inspect}"
+# $stderr.puts "**** GEM-MIXINS: #{mixins_model.mixin_services.inspect}"
+          service_names -= mixins_model.mixin_services
+# $stderr.puts "**** GEM-FINAL-SERVICES: #{service_names.inspect}"
           service_names.map { |s| ServicePresenter.new self, @api, s }
         end
       end

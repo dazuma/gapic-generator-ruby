@@ -62,12 +62,16 @@ module Gapic
         @services ||= begin
           files = @api.generate_files.select { |f| f.package == @package }
           service_names = files.map(&:services).flatten
+$stderr.puts "**** PACK-SERVICES: #{service_names.inspect}"
+# $stderr.puts "**** PACK-MIXINS: #{gem.mixins_model.mixin_services.inspect}"
           service_names -= gem.mixins_model.mixin_services
+# $stderr.puts "**** PACK-FINAL-SERVICES: #{service_names.inspect}"
           # Omit common services in this package. Common service clients do not
           # go into their own package.
           normal_services = service_names.select { |s| @api.delegate_service_for(s).nil? }
           # But include common services that delegate to normal services in this package.
           common_services = normal_services.flat_map { |s| @api.common_services_for s }
+# $stderr.puts "**** PACK-FINAL-SERVICES2: #{(normal_services + common_services).inspect}"
           (normal_services + common_services).map { |s| ServicePresenter.new @gem_presenter, @api, s }
         end
       end
